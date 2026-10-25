@@ -1,0 +1,27 @@
+# Local Valhalla for PathAble — Texas extract clipped to Riverstone / Sugar Land 77479.
+#
+# Usage:
+#   docker compose down
+#   docker compose up -d
+#   docker compose logs -f
+
+services:
+  valhalla:
+    image: ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+    container_name: pathable-valhalla
+    ports:
+      - "8002:8002"
+    environment:
+      # Full Texas PBF (~700MB download once), clipped to Riverstone bbox.
+      tile_urls: https://download.geofabrik.de/north-america/us/texas-latest.osm.pbf
+      # minLon,minLat,maxLon,maxLat around Riverstone / Sugar Land 77479
+      bbox: -95.65,29.50,-95.52,29.60
+      use_tiles_ignore_pbf: "False"
+      force_rebuild: "False"
+      build_elevation: "False"
+      build_admins: "False"
+      build_time_zones: "False"
+      serve_tiles: "True"
+    volumes:
+      - ./valhalla_data:/custom_files
+    restart: unless-stopped
